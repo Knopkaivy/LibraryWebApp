@@ -1,0 +1,38 @@
+﻿@model IEnumerable<LibraryWebApp.Models.Book>
+
+@{
+    ViewData["Title"] = "Books";
+}
+
+<div class="d-flex">
+    <div class="flex-shrink-0 p-3 bg-white sidebar">
+        <p>
+            <a class="btn btn-success" asp-action="Create">Add Book</a>
+        </p>
+        <br />
+        <ul class="list-unstyled ps-0"></ul>
+    </div>
+
+    <div class="row row-cols-1 row-cols-md-4 g-4 p-3">
+        @foreach (var item in Model)
+        {
+            <div class="col">
+                <div class="card h-100">
+                    <img src="@Html.DisplayFor(modelItem => item.CoverImageUrl)" class="card-img-top" alt="@Html.DisplayFor(modelItem => item.Title) cover">
+                    <div class="card-body">
+                        <h5 class="card-title text-truncate">@Html.DisplayFor(modelItem => item.Title)</h5>
+                        <p class="card-text">by @Html.DisplayFor(modelItem => item.Author)</p>
+                    </div>
+                    <div class="card-footer">
+                        <small class="text-body-secondary">
+                            <a class="stretched-link" asp-action="Details" asp-route-id="@item.Id"></a>
+
+                            <a class="btn btn-warning" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+                            <a class="btn btn-danger" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                        </small>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

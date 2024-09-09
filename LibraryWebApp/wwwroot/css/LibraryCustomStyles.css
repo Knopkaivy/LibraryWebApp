@@ -1,0 +1,12 @@
+﻿.sidebar {
+    width: 17.5rem;
+}
+
+.btn {
+    z-index: 2;
+    position: relative;
+}
+
+.form-control {
+    width: 40rem;
+}
