@@ -42,7 +42,10 @@
             </div>
             <br/>
             <div>
-                <a class="btn btn-warning" asp-action="Edit" asp-route-id="@Model?.Id">Edit</a>
+                @if (User.IsInRole("Administrator") || User.IsInRole("Librarian"))
+                {
+                    <a class="btn btn-warning" asp-action="Edit" asp-route-id="@Model?.Id">Edit</a>
+                }
             </div>
         </div>
     </div>

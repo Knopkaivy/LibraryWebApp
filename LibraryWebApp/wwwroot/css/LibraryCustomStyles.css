@@ -7,6 +7,6 @@
     position: relative;
 }
 
-.form-control {
+.create-book__form-control, .edit-book__form-control {
     width: 40rem;
 }

@@ -6,9 +6,12 @@
 
 <div class="d-flex">
     <div class="flex-shrink-0 p-3 bg-white sidebar">
-        <p>
-            <a class="btn btn-success" asp-action="Create">Add Book</a>
-        </p>
+        @if (User.IsInRole("Administrator") || User.IsInRole("Librarian"))
+        {
+            <p>
+                <a class="btn btn-success" asp-action="Create">Add Book</a>
+            </p>
+        }
         <br />
         <ul class="list-unstyled ps-0"></ul>
     </div>
@@ -26,9 +29,15 @@
                     <div class="card-footer">
                         <small class="text-body-secondary">
                             <a class="stretched-link" asp-action="Details" asp-route-id="@item.Id"></a>
-
-                            <a class="btn btn-warning" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
-                            <a class="btn btn-danger" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                            @if (User.IsInRole("Administrator") || User.IsInRole("Librarian"))
+                            { 
+                                <a class="btn btn-warning" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+                                <a class="btn btn-danger" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                            } else
+                            {
+                                <a class="btn btn-success" asp-action="Edit" asp-route-id="@item.Id">Borrow</a>
+                                <a class="btn btn-warning" asp-action="Edit" asp-route-id="@item.Id">Place a Hold</a>
+                            }
                         </small>
                     </div>
                 </div>
