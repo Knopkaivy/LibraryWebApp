@@ -35,8 +35,14 @@
                                 <a class="btn btn-danger" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
                             } else
                             {
-                                <a class="btn btn-success" asp-action="Edit" asp-route-id="@item.Id">Borrow</a>
-                                <a class="btn btn-warning" asp-action="Edit" asp-route-id="@item.Id">Place a Hold</a>
+                                if(item.LendingHistory == null || item.LendingHistory.OrderByDescending(h => h.LeaseStartDate).ToList()[0].LeaseActualEndDate != null)
+                                {
+                                    <a class="btn btn-success" asp-action="Lend" asp-route-id="@item.Id">Borrow</a>
+                                }
+                                else
+                                {
+                                    <a class="btn btn-warning" asp-action="Edit" asp-route-id="@item.Id">Place a Hold</a>
+                                }
                             }
                         </small>
                     </div>

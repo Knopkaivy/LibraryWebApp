@@ -1,0 +1,40 @@
+﻿@model LibraryWebApp.Models.Book
+
+@{
+    ViewData["Title"] = "Borrow";
+    DateOnly leaseProjectedEndDate = DateOnly.FromDateTime(DateTime.Now).AddDays(14);
+}
+
+<div class="d-flex" >
+    <div class="flex-shrink-0 p-3 bg-white sidebar">
+        <p>
+            <a asp-action="Index">Back to List</a>
+        </p>
+        <br />
+        <ul class="list-unstyled ps-0"></ul>
+    </div>
+    <div class="p-3">
+        <div class="row">
+            <div class="col-sm-2">
+                <img src="@Html.DisplayFor(model => model.CoverImageUrl)" class="card-img-top" alt="@Html.DisplayFor(model => model.Title) cover">
+            </div>
+            <div class="col-sm-10">
+                <h4>
+                    @Html.DisplayFor(model => model.Title)
+                </h4>
+                <div>
+                    by @Html.DisplayFor(model => model.Author)
+                </div>
+                <br />
+                <div class="fw-bold">
+                    You can borrow this book now for up to 14 days. It will be delivered to your Kindle reading app and automaticall returned on <span class="text-success">@leaseProjectedEndDate</span>
+                </div>
+                <br />
+                <form asp-action="Lend">
+                    <input type="hidden" asp-for="Id" />
+                    <input type="submit" value="Borrow Now" class="btn btn-success" />
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

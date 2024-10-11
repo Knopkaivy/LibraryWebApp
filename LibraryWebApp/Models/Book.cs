@@ -14,5 +14,6 @@ namespace LibraryWebApp.Models
         public string Description { get; set; }
         [Display(Name = "Cover Image URL")]
         public string? CoverImageUrl { get; set; }
+        public List<LendingHistory> LendingHistory { get; set; }
     }
 }

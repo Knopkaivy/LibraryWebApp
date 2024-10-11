@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using LibraryWebApp.Data;
 using LibraryWebApp.Models;
+using LibraryWebApp.Services.BookLending;
 
 namespace LibraryWebApp.Controllers
 {
@@ -14,10 +15,14 @@ namespace LibraryWebApp.Controllers
     public class BooksController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private BookLendingService _bookLendingService;
 
-        public BooksController(ApplicationDbContext context)
+        public BooksController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
+            _bookLendingService = new BookLendingService(_context);
         }
 
         // GET: Books
@@ -154,6 +159,41 @@ namespace LibraryWebApp.Controllers
             }
 
             await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+
+        // GET: Books/Lend/5
+        [Authorize(Roles = "User")]
+        public async Task<IActionResult> Lend(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var book = await _context.Book
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (book == null)
+            {
+                return NotFound();
+            }
+
+            return View(book);
+        }
+
+        // POST: Books/Lend/5
+        [HttpPost, ActionName("Lend")]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "User")]
+        public async Task<IActionResult> Lend(int id)
+        {
+            var book = await _context.Book.FindAsync(id);
+            var user = await _userManager.GetUserAsync(HttpContext.User);
+            if (book != null && user != null)
+            {
+                await _bookLendingService.LendBook(id, user.Id);
+            }
+
             return RedirectToAction(nameof(Index));
         }
 
