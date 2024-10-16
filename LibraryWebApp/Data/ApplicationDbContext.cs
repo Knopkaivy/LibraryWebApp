@@ -49,6 +49,14 @@ namespace LibraryWebApp.Data
                 RoleId = "b117d060-6194-4e16-8c49-f60bbf42ec3e",
                 UserId = "80c4e17f-70dd-4aaa-bbc0-ac3fd88682bf"
             });
+            builder.Entity<LendingHistory>().HasData(new LendingHistory
+            {
+                Id = -1,
+                BookId = 1,
+                UserId = "17ca3b5e-d8ba-4db1-a5a1-09915c95b06b",
+                LeaseStartDate = new DateOnly(2024, 10, 1),
+                LeaseProjectedEndDate = new DateOnly(2024, 10, 1).AddDays(14)
+            });
         }
         public DbSet<LibraryWebApp.Models.Book> Book { get; set; } = default!;
         public DbSet<LendingHistory> LendingHistory { get; set; }
