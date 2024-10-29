@@ -4,6 +4,7 @@ using LibraryWebApp.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LibraryWebApp.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241017013615_BookRemoveLendingHistory")]
+    partial class BookRemoveLendingHistory
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -102,7 +105,7 @@ namespace LibraryWebApp.Data.Migrations
                         {
                             Id = "80c4e17f-70dd-4aaa-bbc0-ac3fd88682bf",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "0bf31339-4e34-4ad1-a34b-e143fd1d5a4a",
+                            ConcurrencyStamp = "c7bc4edc-9e16-4e5c-8f4f-f673b1c5ae17",
                             DateOfBirth = new DateOnly(1991, 1, 1),
                             Email = "admin@admin.com",
                             EmailConfirmed = true,
@@ -111,9 +114,9 @@ namespace LibraryWebApp.Data.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@ADMIN.COM",
                             NormalizedUserName = "ADMIN@ADMIN.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEPIKTx/Fjq9dCknD8I5j4nvprW3jceaS5PNOBMiIEdYDvE2aVDdhgiMqtIqAWeuFYQ==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEGxm2kAi+a69u2M8iXAihnX871KfJyzIxiKhu+dLx40iaTnejXK0c5U+yT2TdgsVng==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "aee87d33-3465-4583-ab77-3993b4ea6082",
+                            SecurityStamp = "6f88a505-3614-4bdd-bbe0-61c26a29f9e6",
                             TwoFactorEnabled = false,
                             UserName = "admin@admin.com"
                         });
@@ -172,6 +175,9 @@ namespace LibraryWebApp.Data.Migrations
 
                     b.Property<int>("BookId")
                         .HasColumnType("int");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
 
                     b.Property<string>("UserId")
                         .IsRequired()

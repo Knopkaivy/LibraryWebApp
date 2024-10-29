@@ -48,8 +48,14 @@
                 }
                 else
                 {
-                    <a class="btn btn-success" asp-action="Edit" asp-route-id="@Model?.Id">Borrow</a>
-                    <a class="btn btn-warning" asp-action="Edit" asp-route-id="@Model?.Id">Place a Hold</a>
+                    if (Model.IsAvailable)
+                    {
+                        <a class="btn btn-success" asp-action="Lend" asp-route-id="@Model?.Id">Borrow</a>
+                    }
+                    else
+                    {
+                        <a class="btn btn-warning" asp-action="PlaceHold" asp-route-id="@Model?.Id">Place a Hold</a>
+                    }
                 }
             </div>
         </div>

@@ -4,6 +4,7 @@ using LibraryWebApp.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LibraryWebApp.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241016123319_BookAddIsAvailable")]
+    partial class BookAddIsAvailable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -102,7 +105,7 @@ namespace LibraryWebApp.Data.Migrations
                         {
                             Id = "80c4e17f-70dd-4aaa-bbc0-ac3fd88682bf",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "0bf31339-4e34-4ad1-a34b-e143fd1d5a4a",
+                            ConcurrencyStamp = "f838e5e6-ecd4-495b-ac70-6687c8b61290",
                             DateOfBirth = new DateOnly(1991, 1, 1),
                             Email = "admin@admin.com",
                             EmailConfirmed = true,
@@ -111,9 +114,9 @@ namespace LibraryWebApp.Data.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@ADMIN.COM",
                             NormalizedUserName = "ADMIN@ADMIN.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEPIKTx/Fjq9dCknD8I5j4nvprW3jceaS5PNOBMiIEdYDvE2aVDdhgiMqtIqAWeuFYQ==",
+                            PasswordHash = "AQAAAAIAAYagAAAAECJJdI6Glndx0s8kDLDnoqOB5OFxODC3jFIIXmDx3820tQwmm2h+weupvmWXhEdJmA==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "aee87d33-3465-4583-ab77-3993b4ea6082",
+                            SecurityStamp = "0dd6acd2-0799-4f56-8938-e60f9d1fc514",
                             TwoFactorEnabled = false,
                             UserName = "admin@admin.com"
                         });
@@ -172,6 +175,9 @@ namespace LibraryWebApp.Data.Migrations
 
                     b.Property<int>("BookId")
                         .HasColumnType("int");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
 
                     b.Property<string>("UserId")
                         .IsRequired()
@@ -390,7 +396,7 @@ namespace LibraryWebApp.Data.Migrations
             modelBuilder.Entity("LibraryWebApp.Data.LendingHistory", b =>
                 {
                     b.HasOne("LibraryWebApp.Models.Book", "Book")
-                        .WithMany()
+                        .WithMany("LendingHistory")
                         .HasForeignKey("BookId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -474,6 +480,11 @@ namespace LibraryWebApp.Data.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("LibraryWebApp.Models.Book", b =>
+                {
+                    b.Navigation("LendingHistory");
                 });
 #pragma warning restore 612, 618
         }

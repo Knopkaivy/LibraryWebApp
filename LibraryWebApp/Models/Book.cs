@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LibraryWebApp.Models
 {
@@ -14,6 +15,9 @@ namespace LibraryWebApp.Models
         public string Description { get; set; }
         [Display(Name = "Cover Image URL")]
         public string? CoverImageUrl { get; set; }
-        public List<LendingHistory> LendingHistory { get; set; }
+        [NotMapped]
+        public bool IsAvailable { get; set; } = true;
+        [NotMapped]
+        public int WaitingTime { get; set; } = 0;
     }
 }
