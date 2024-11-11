@@ -67,6 +67,8 @@ namespace LibraryWebApp.Controllers
             return View(book);
         }
 
+        #region Admin Pages
+
         // GET: Books/Create
         [Authorize(Roles = "Administrator,Librarian")]
         public IActionResult Create()
@@ -178,6 +180,29 @@ namespace LibraryWebApp.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
+
+        // GET: Books/WaitingList
+        [Authorize(Roles = "Administrator,Librarian")]
+        public async Task<IActionResult> WaitingList()
+        {
+            //List<WaitingListItem> waitingList = await _context.WaitingList.OrderBy(w => w.Book.Title).ThenBy(w => w.Id).ToListAsync();
+            List<WaitingListItem> waitingList = await (from WL in _context.WaitingList
+                                                       join B in _context.Book on WL.BookId equals B.Id
+                                                       join U in _context.Users on WL.UserId equals U.Id
+                                                       select new WaitingListItem
+                                                       {
+                                                           Id = WL.Id,
+                                                           Book = B,
+                                                           User = U,
+                                                       }).OrderBy(w => w.Book.Title).ThenBy(w => w.Id).ToListAsync();
+
+            return View(waitingList);
+        }
+
+
+        #endregion
+
+        #region User Pages
 
         // GET: Books/Lend/5
         [Authorize(Roles = "User")]
@@ -347,8 +372,8 @@ namespace LibraryWebApp.Controllers
                 return RedirectToAction(nameof(Index));
             }
             List<Book> myBooksWaiting = new List<Book>();
-            List<WaitingList> myWaitingList = await _context.WaitingList.Where(w => w.UserId == user.Id).ToListAsync();
-            foreach (WaitingList item in myWaitingList)
+            List<WaitingListItem> myWaitingList = await _context.WaitingList.Where(w => w.UserId == user.Id).ToListAsync();
+            foreach (WaitingListItem item in myWaitingList)
             {
                 var book = await _context.Book.FindAsync(item.BookId);
                 if (book != null) { 
@@ -412,7 +437,9 @@ namespace LibraryWebApp.Controllers
 
             return RedirectToAction(nameof(MyWaitingList));
         }
-
+        #endregion
+        
+        
         private bool BookExists(int id)
         {
             return _context.Book.Any(e => e.Id == id);

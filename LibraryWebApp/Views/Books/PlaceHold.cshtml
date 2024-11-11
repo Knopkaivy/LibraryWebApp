@@ -8,10 +8,23 @@
 <div class="d-flex">
     <div class="flex-shrink-0 p-3 bg-white sidebar">
         <p>
-            <a asp-action="Index">Back to List</a>
+            <a asp-action="Index">All Books</a>
         </p>
         <br />
-        <ul class="list-unstyled ps-0"></ul>
+        @if (User.IsInRole("User"))
+        {
+            <ul class="list-unstyled ps-0">
+                <li>
+                    <a asp-action="MyBooks">My Books</a>
+                </li>
+                <li>
+                    <a asp-action="MyHistory">History</a>
+                </li>
+                <li>
+                    <a asp-action="MyWaitingList">Waiting List</a>
+                </li>
+            </ul>
+        }
     </div>
     <div class="p-3">
         <div class="row">
@@ -36,6 +49,7 @@
                 <form asp-action="PlaceHold">
                     <input type="hidden" asp-for="Id" />
                     <input type="submit" value="Place Hold Now" class="btn btn-warning" />
+                    <input class="btn btn-primary" type="button" onclick="history.go(-1)" value="Go Back" />
                 </form>
             </div>
         </div>

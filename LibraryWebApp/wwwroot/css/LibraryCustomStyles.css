@@ -10,3 +10,12 @@
 .create-book__form-control, .edit-book__form-control {
     width: 40rem;
 }
+li p{
+    margin-bottom: 0;
+}
+td {
+    max-width: 200px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

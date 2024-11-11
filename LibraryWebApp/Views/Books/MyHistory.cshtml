@@ -14,6 +14,9 @@
             <ul class="list-unstyled ps-0">
                 <li>
                     <a asp-action="MyBooks">My Books</a>
+                </li>                
+                <li>
+                    <p>History</p>
                 </li>
                 <li>
                     <a asp-action="MyWaitingList">Waiting List</a>
@@ -44,7 +47,7 @@
                             {
                                 if (item.IsAvailable)
                                 {
-                                    <a class="btn btn-success" asp-action="Lend" asp-route-id="@item.Id">Borrow</a>
+                                    <a class="btn btn-success" asp-action="Lend" asp-route-id="@item.Id">Borrow Again</a>
                                 }
                                 else
                                 {

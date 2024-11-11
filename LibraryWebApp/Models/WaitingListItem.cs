@@ -2,7 +2,7 @@
 
 namespace LibraryWebApp.Models
 {
-    public class WaitingList : BaseEntity
+    public class WaitingListItem : BaseEntity
     {
         public Book Book { get; set; }
 

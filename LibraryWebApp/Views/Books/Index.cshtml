@@ -12,9 +12,24 @@
                 <a class="btn btn-success" asp-action="Create">Add Book</a>
             </p>
             <br />
+            <ul class="list-unstyled ps-0">
+                <li>
+                    <a asp-action="MyBooks">Users</a>
+                </li>
+                <li>
+                    <a asp-action="MyHistory">Open Leases</a>
+                </li>
+                <li>
+                    <a asp-action="WaitingList">Waiting List</a>
+                </li>
+            </ul>
         }
         else
         {
+            <p>
+                All Books
+            </p>
+            <br />
             <ul class="list-unstyled ps-0">
                 <li>
                     <a asp-action="MyBooks">My Books</a>

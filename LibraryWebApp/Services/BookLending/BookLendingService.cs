@@ -42,7 +42,7 @@ namespace LibraryWebApp.Services.BookLending
                 return;
             }
 
-            WaitingList newWaitingListEntry = new WaitingList{
+            WaitingListItem newWaitingListEntry = new WaitingListItem{
                 BookId = bookId,
                 UserId = userId,
             };

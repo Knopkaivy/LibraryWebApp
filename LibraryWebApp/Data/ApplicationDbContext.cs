@@ -60,6 +60,6 @@ namespace LibraryWebApp.Data
         }
         public DbSet<LibraryWebApp.Models.Book> Book { get; set; } = default!;
         public DbSet<LendingHistory> LendingHistory { get; set; }
-        public DbSet<WaitingList> WaitingList { get; set; }
+        public DbSet<WaitingListItem> WaitingList { get; set; }
     }
 }
