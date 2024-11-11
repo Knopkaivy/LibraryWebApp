@@ -185,7 +185,6 @@ namespace LibraryWebApp.Controllers
         [Authorize(Roles = "Administrator,Librarian")]
         public async Task<IActionResult> WaitingList()
         {
-            //List<WaitingListItem> waitingList = await _context.WaitingList.OrderBy(w => w.Book.Title).ThenBy(w => w.Id).ToListAsync();
             List<WaitingListItem> waitingList = await (from WL in _context.WaitingList
                                                        join B in _context.Book on WL.BookId equals B.Id
                                                        join U in _context.Users on WL.UserId equals U.Id
@@ -197,6 +196,26 @@ namespace LibraryWebApp.Controllers
                                                        }).OrderBy(w => w.Book.Title).ThenBy(w => w.Id).ToListAsync();
 
             return View(waitingList);
+        }
+
+        // GET: Books/OpenLeases
+        [Authorize(Roles = "Administrator,Librarian")]
+        public async Task<IActionResult> OpenLeases()
+        {
+            List<LendingHistory> openLeases = await (from LH in _context.LendingHistory
+                                                       join B in _context.Book on LH.BookId equals B.Id
+                                                       join U in _context.Users on LH.UserId equals U.Id
+                                                        where LH.LeaseActualEndDate == null
+                                                       select new LendingHistory
+                                                       {
+                                                           Id = LH.Id,
+                                                           Book = B,
+                                                           User = U,
+                                                           LeaseStartDate = LH.LeaseStartDate,
+                                                           LeaseProjectedEndDate = LH.LeaseProjectedEndDate,
+                                                       }).OrderBy(w => w.Book.Title).ToListAsync();
+
+            return View(openLeases);
         }
 
 

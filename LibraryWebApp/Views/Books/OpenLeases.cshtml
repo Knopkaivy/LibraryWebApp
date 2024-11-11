@@ -1,7 +1,7 @@
-﻿@model List<LibraryWebApp.Models.WaitingListItem>
+﻿@model List<LibraryWebApp.Data.LendingHistory>
 
 @{
-    ViewData["Title"] = "Waiting List";
+    ViewData["Title"] = "Open Leases";
 }
 
 <div class="d-flex">
@@ -17,10 +17,10 @@
                     <a asp-action="Users">Users</a>
                 </li>
                 <li>
-                    <a asp-action="OpenLeases">Open Leases</a>
+                    <p>Open Leases</p>
                 </li>
                 <li>
-                    <p>Waiting List</p>
+                    <a asp-action="WaitingList">Waiting List</a>
                 </li>
             </ul>
         }
@@ -40,7 +40,7 @@
         }
     </div>
     <div>
-        <h1>Waiting List</h1>
+        <h1>Open Leases</h1>
         <br/>
         <table class="table">
             <thead>
@@ -49,6 +49,8 @@
                     <th scope="col">Book Name</th>
                     <th scope="col">Author</th>
                     <th scope="col">User</th>
+                    <th scope="col">Start Date</th>
+                    <th scope="col">Projected End Date</th>
                 </tr>
             </thead>
             <tbody>
@@ -62,6 +64,8 @@
                             <td>@item.Book.Title</td>
                             <td>@item.Book.Author</td>
                             <td>@item.User.FirstName @item.User.LastName</td>
+                            <td>@item.LeaseStartDate</td>
+                            <td>@item.LeaseProjectedEndDate</td>
                         </tr>
                         i++;
                     }
