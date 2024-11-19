@@ -4,71 +4,33 @@
     ViewData["Title"] = "Waiting List";
 }
 
-<div class="d-flex">
-    <div class="flex-shrink-0 p-3 bg-white sidebar">
-        <p>
-            <a asp-action="Index">All Books</a>
-        </p>
-        <br />
-        @if (User.IsInRole("Administrator") || User.IsInRole("Librarian"))
-        {
-            <ul class="list-unstyled ps-0">
-                <li>
-                    <a asp-action="Users">Users</a>
-                </li>
-                <li>
-                    <a asp-action="OpenLeases">Open Leases</a>
-                </li>
-                <li>
-                    <p>Waiting List</p>
-                </li>
-            </ul>
-        }
-        else
-        {
-            <ul class="list-unstyled ps-0">
-                <li>
-                    <a asp-action="MyBooks">My Books</a>
-                </li>
-                <li>
-                    <a asp-action="MyHistory">History</a>
-                </li>                
-                <li>
-                    <p>Waiting List</p>
-                </li>
-            </ul>
-        }
-    </div>
-    <div>
-        <h1>Waiting List</h1>
-        <br/>
-        <table class="table">
-            <thead>
-                <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Book Name</th>
-                    <th scope="col">Author</th>
-                    <th scope="col">User</th>
-                </tr>
-            </thead>
-            <tbody>
-                    @{
-                        int i = 1;
-                    }
-                    @foreach(var item in Model.ToList())
-                    {
-                        <tr>
-                            <th scope="row">@i</th>
-                            <td>@item.Book.Title</td>
-                            <td>@item.Book.Author</td>
-                            <td>@item.User.FirstName @item.User.LastName</td>
-                        </tr>
-                        i++;
-                    }
+<div>
+    <h1>Waiting List</h1>
+    <br/>
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Book Name</th>
+                <th scope="col">Author</th>
+                <th scope="col">User</th>
+            </tr>
+        </thead>
+        <tbody>
+                @{
+                    int i = 1;
+                }
+                @foreach(var item in Model.ToList())
+                {
+                    <tr>
+                        <th scope="row">@i</th>
+                        <td>@item.Book.Title</td>
+                        <td>@item.Book.Author</td>
+                        <td>@item.User.FirstName @item.User.LastName</td>
+                    </tr>
+                    i++;
+                }
 
-            </tbody>
-        </table>
-    </div>
+        </tbody>
+    </table>
 </div>
-
-

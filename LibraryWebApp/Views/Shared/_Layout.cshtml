@@ -34,7 +34,54 @@
     </header>
     <div class="container">
         <main role="main" class="pb-3">
-            @RenderBody()
+            <div class="d-flex">
+                <div class="flex-shrink-0 p-3 bg-white sidebar">
+                    @if (User.IsInRole("Administrator") || User.IsInRole("Librarian"))
+                    {
+                        <p>
+                            <a class="btn btn-success" asp-action="Create">Add Book</a>
+                        </p>
+                        <br />
+                    }
+
+                        <p>
+                            <a asp-controller="Books" asp-action="Index">All Books</a>
+                        </p>
+                        <br />
+                    @if (User.IsInRole("Administrator") || User.IsInRole("Librarian"))
+                    {
+                        <ul class="list-unstyled ps-0">
+                            <li>
+                                <a asp-controller="Users" asp-action="Index">Users</a>
+                            </li>
+                            <li>
+                                <a asp-controller="Books" asp-action="OpenLeases">Open Leases</a>
+                            </li>
+                            <li>
+                                <a asp-controller="Books" asp-action="LendingHistory">Lending History</a>
+                            </li>
+                            <li>
+                                <a asp-controller="Books" asp-action="WaitingList">Waiting List</a>
+                            </li>
+                        </ul>
+                    }
+                    else if(User.IsInRole("User"))
+                    {
+                        <ul class="list-unstyled ps-0">
+                            <li>
+                                <a asp-controller="Books" asp-action="MyBooks">My Books</a>
+                            </li>
+                            <li>
+                                <a asp-controller="Books" asp-action="MyHistory">History</a>
+                            </li>
+                            <li>
+                                <a asp-controller="Books" asp-action="MyWaitingList">Waiting List</a>
+                            </li>
+                        </ul>
+                    }
+                </div>
+                @RenderBody()
+            </div>
         </main>
     </div>
 

@@ -4,62 +4,39 @@
     ViewData["Title"] = "History";
 }
 
-<div class="d-flex">
-    <div class="flex-shrink-0 p-3 bg-white sidebar">
-        <p>
-            <a asp-action="Index">All Books</a>
-        </p>
-        <br />
-        @if(User.IsInRole("User")){
-            <ul class="list-unstyled ps-0">
-                <li>
-                    <a asp-action="MyBooks">My Books</a>
-                </li>                
-                <li>
-                    <p>History</p>
-                </li>
-                <li>
-                    <a asp-action="MyWaitingList">Waiting List</a>
-                </li>
-            </ul>
-        }
-    </div>
 
-    <div class=" flex-grow-1 row row-cols-1 row-cols-md-4 g-4 p-3">
-        @foreach (var item in Model)
-        {
-            <div class="col">
-                <div class="card h-100">
-                    <img src="@Html.DisplayFor(modelItem => item.CoverImageUrl)" class="card-img-top" alt="@Html.DisplayFor(modelItem => item.Title) cover">
-                    <div class="card-body">
-                        <h5 class="card-title text-truncate">@Html.DisplayFor(modelItem => item.Title)</h5>
-                        <p class="card-text">by @Html.DisplayFor(modelItem => item.Author)</p>
-                    </div>
-                    <div class="card-footer">
-                        <small class="text-body-secondary">
-                            <a class="stretched-link" asp-action="Details" asp-route-id="@item.Id"></a>
-                            @if (User.IsInRole("Administrator") || User.IsInRole("Librarian"))
+<div class=" flex-grow-1 row row-cols-1 row-cols-md-4 g-4 p-3">
+    @foreach (var item in Model)
+    {
+        <div class="col">
+            <div class="card h-100">
+                <img src="@Html.DisplayFor(modelItem => item.CoverImageUrl)" class="card-img-top" alt="@Html.DisplayFor(modelItem => item.Title) cover">
+                <div class="card-body">
+                    <h5 class="card-title text-truncate">@Html.DisplayFor(modelItem => item.Title)</h5>
+                    <p class="card-text">by @Html.DisplayFor(modelItem => item.Author)</p>
+                </div>
+                <div class="card-footer">
+                    <small class="text-body-secondary">
+                        <a class="stretched-link" asp-action="Details" asp-route-id="@item.Id"></a>
+                        @if (User.IsInRole("Administrator") || User.IsInRole("Librarian"))
+                        {
+                            <a class="btn btn-warning" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+                            <a class="btn btn-danger" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                        }
+                        else
+                        {
+                            if (item.IsAvailable)
                             {
-                                <a class="btn btn-warning" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
-                                <a class="btn btn-danger" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                                <a class="btn btn-success" asp-action="Lend" asp-route-id="@item.Id">Borrow Again</a>
                             }
                             else
                             {
-                                if (item.IsAvailable)
-                                {
-                                    <a class="btn btn-success" asp-action="Lend" asp-route-id="@item.Id">Borrow Again</a>
-                                }
-                                else
-                                {
-                                    <a class="btn btn-warning" asp-action="PlaceHold" asp-route-id="@item.Id">Place a Hold</a>
-                                }
+                                <a class="btn btn-warning" asp-action="PlaceHold" asp-route-id="@item.Id">Place a Hold</a>
                             }
-                        </small>
-                    </div>
+                        }
+                    </small>
                 </div>
             </div>
-        }
-    </div>
+        </div>
+    }
 </div>
-
-

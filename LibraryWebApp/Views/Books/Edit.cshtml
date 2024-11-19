@@ -4,14 +4,6 @@
     ViewData["Title"] = "Edit";
 }
 
-<div class="d-flex" >
-    <div class="flex-shrink-0 p-3 bg-white sidebar">
-        <p>
-            <a asp-action="Index">Back to List</a>
-        </p>
-        <br />
-        <ul class="list-unstyled ps-0"></ul>
-    </div>
     <div class="p-3">
         <h1>Edit Book</h1>
         <div class="col-auto">
@@ -62,7 +54,6 @@
         </div>
     </div>
 
-</div>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

@@ -4,75 +4,53 @@
     ViewData["Title"] = "Details";
 }
 
-<div class="d-flex" >
-    <div class="flex-shrink-0 p-3 bg-white sidebar">
-        <p>
-            <a asp-action="Index">All Books</a>
-        </p>
-        <br />
-        @if (User.IsInRole("User"))
-        {
-            <ul class="list-unstyled ps-0">
-                <li>
-                    <a asp-action="MyBooks">My Books</a>
-                </li>
-                <li>
-                    <a asp-action="MyHistory">History</a>
-                </li>
-                <li>
-                    <a asp-action="MyWaitingList">Waiting List</a>
-                </li>
-            </ul>
-        }
-    </div>
 
-    <div class="row p-3">
-        <div class="col-sm-2">
-            <img src="@Html.DisplayFor(model => model.CoverImageUrl)" class="card-img-top" alt="@Html.DisplayFor(model => model.Title) cover">
+<div class="row p-3">
+    <div class="col-sm-2">
+        <img src="@Html.DisplayFor(model => model.CoverImageUrl)" class="card-img-top" alt="@Html.DisplayFor(model => model.Title) cover">
+    </div>
+    <div class="col-sm-10">
+        <h4>
+            @Html.DisplayFor(model => model.Title)
+        </h4>
+        <div>
+            by @Html.DisplayFor(model => model.Author)
         </div>
-        <div class="col-sm-10">
-            <h4>
-                @Html.DisplayFor(model => model.Title)
-            </h4>
-            <div>
-                by @Html.DisplayFor(model => model.Author)
-            </div>
-            <br />
-            <div>
-                <span class="fw-bold">Release date: </span>@Html.DisplayFor(model => model.ReleaseDate)
-            </div>
-            <br />
-            <div>
-                <span class="fw-bold">Genre: </span>@Html.DisplayFor(model => model.Genre)
-            </div>
-            <br />
-            <div class="fw-bold">
-                @Html.DisplayNameFor(model => model.Description):
-            </div>
-            <br />
-            <div>
-                @Html.DisplayFor(model => model.Description)
-            </div>
-            <br/>
-            <div>
-                @if (User.IsInRole("Administrator") || User.IsInRole("Librarian"))
+        <br />
+        <div>
+            <span class="fw-bold">Release date: </span>@Html.DisplayFor(model => model.ReleaseDate)
+        </div>
+        <br />
+        <div>
+            <span class="fw-bold">Genre: </span>@Html.DisplayFor(model => model.Genre)
+        </div>
+        <br />
+        <div class="fw-bold">
+            @Html.DisplayNameFor(model => model.Description):
+        </div>
+        <br />
+        <div>
+            @Html.DisplayFor(model => model.Description)
+        </div>
+        <br/>
+        <div>
+            @if (User.IsInRole("Administrator") || User.IsInRole("Librarian"))
+            {
+                <a class="btn btn-warning" asp-action="Edit" asp-route-id="@Model?.Id">Edit</a>
+                <a class="btn btn-danger" asp-action="Delete" asp-route-id="@Model?.Id">Delete</a>
+            }
+            else
+            {
+                if (Model.IsAvailable)
                 {
-                    <a class="btn btn-warning" asp-action="Edit" asp-route-id="@Model?.Id">Edit</a>
-                    <a class="btn btn-danger" asp-action="Delete" asp-route-id="@Model?.Id">Delete</a>
+                    <a class="btn btn-success" asp-action="Lend" asp-route-id="@Model?.Id">Borrow</a>
                 }
                 else
                 {
-                    if (Model.IsAvailable)
-                    {
-                        <a class="btn btn-success" asp-action="Lend" asp-route-id="@Model?.Id">Borrow</a>
-                    }
-                    else
-                    {
-                        <a class="btn btn-warning" asp-action="PlaceHold" asp-route-id="@Model?.Id">Place a Hold</a>
-                    }
+                    <a class="btn btn-warning" asp-action="PlaceHold" asp-route-id="@Model?.Id">Place a Hold</a>
                 }
-                <input class="btn btn-primary" type="button" onclick="history.go(-1)" value="Go Back" />
-            </div>
+            }
+            <input class="btn btn-primary" type="button" onclick="history.go(-1)" value="Go Back" />
         </div>
     </div>
 </div>
