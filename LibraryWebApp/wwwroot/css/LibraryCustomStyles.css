@@ -19,3 +19,6 @@ td {
     overflow: hidden;
     text-overflow: ellipsis;
 }
+.home__container{
+    flex-grow: 1;
+}
