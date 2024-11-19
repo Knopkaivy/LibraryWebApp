@@ -218,6 +218,26 @@ namespace LibraryWebApp.Controllers
             return View(openLeases);
         }
 
+        // GET: Books/LendingHistory
+        [Authorize(Roles = "Administrator,Librarian")]
+        public async Task<IActionResult> LendingHistory()
+        {
+            List<LendingHistory> history = await (from LH in _context.LendingHistory
+                                                       join B in _context.Book on LH.BookId equals B.Id
+                                                       join U in _context.Users on LH.UserId equals U.Id
+                                                       select new LendingHistory
+                                                       {
+                                                           Id = LH.Id,
+                                                           Book = B,
+                                                           User = U,
+                                                           LeaseStartDate = LH.LeaseStartDate,
+                                                           LeaseProjectedEndDate = LH.LeaseProjectedEndDate,
+                                                           LeaseActualEndDate = LH.LeaseActualEndDate,
+                                                       }).OrderBy(h => h.Book.Title).ThenByDescending(h => h.LeaseStartDate).ToListAsync();
+
+            return View(history);
+        }
+
 
         #endregion
 
