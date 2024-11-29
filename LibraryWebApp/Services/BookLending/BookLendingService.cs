@@ -83,6 +83,28 @@ namespace LibraryWebApp.Services.BookLending
                 }
                 await _context.SaveChangesAsync();
             }
+        }        
+        
+        public async Task LendBookToWaitingItem(int bookId)
+        {
+            var waitingItem = await _context.WaitingList.OrderBy(w => w.Id).FirstAsync(w => w.BookId == bookId);
+            if (waitingItem == null) {
+                return;
+            }
+
+            await LendBook(bookId, waitingItem.UserId);
+        }        
+        public async Task LendAllAvailableBooksToWaitingList()
+        {
+            var potentialLeaseItems = await _context.WaitingList.OrderBy(w => w.Id).GroupBy(w => w.BookId).Select(w => w.FirstOrDefault()).ToListAsync();
+
+            if (potentialLeaseItems.Count > 0) {
+                foreach (var lease in potentialLeaseItems) {
+                    if (lease != null) { 
+                        await LendBookToWaitingItem(lease.BookId);
+                    }
+                }
+            }
         }
 
     }

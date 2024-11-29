@@ -249,6 +249,17 @@ namespace LibraryWebApp.Controllers
             return RedirectToAction(nameof(OpenLeases));
         }
 
+        // POST: Books/LendAllAvailableBooksToWaitingList/
+        [HttpPost, ActionName("LendAllAvailableBooksToWaitingList")]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrator,Librarian")]
+        public async Task<IActionResult> LendAllAvailableBooksToWaitingList()
+        {
+                await _bookLendingService.LendAllAvailableBooksToWaitingList();
+
+            return RedirectToAction(nameof(WaitingList));
+        }
+
 
         #endregion
 
