@@ -406,6 +406,10 @@ namespace LibraryWebApp.Controllers
                 var book = await _context.Book.FindAsync(lendingHistory.BookId);
                 if(book != null)
                 {
+                    var bookHistory = await _context.LendingHistory.OrderByDescending(h => h.LeaseStartDate).FirstOrDefaultAsync(m => m.BookId == book.Id);
+                    var waitingList = await _context.WaitingList.Where(w => w.BookId == book.Id).ToListAsync();
+                    book.IsAvailable = (bookHistory == null || bookHistory.LeaseActualEndDate != null) && waitingList.Count == 0;
+
                     myBooksHistory.Add(book);
                 }
             }
