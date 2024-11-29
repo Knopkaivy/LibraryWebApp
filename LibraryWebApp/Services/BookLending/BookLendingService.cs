@@ -71,6 +71,19 @@ namespace LibraryWebApp.Services.BookLending
             _context.Update(bookLendingHistory);
             await _context.SaveChangesAsync();
         }
+        public async Task EndExpiredLeases()
+        {
+            DateOnly today = DateOnly.FromDateTime(DateTime.Now);
+            List<LendingHistory> expiredLeaseList = await _context.LendingHistory.Where(h => h.LeaseProjectedEndDate <= today && h.LeaseActualEndDate == null).ToListAsync();
+            if(expiredLeaseList.Count > 0)
+            {
+                foreach (var lease in expiredLeaseList) {
+                    lease.LeaseActualEndDate = today;
+                    _context.Update(lease);
+                }
+                await _context.SaveChangesAsync();
+            }
+        }
 
     }
 }

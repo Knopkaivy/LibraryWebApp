@@ -238,6 +238,17 @@ namespace LibraryWebApp.Controllers
             return View(history);
         }
 
+        // POST: Books/EndExpiredLeases/
+        [HttpPost, ActionName("EndExpiredLeases")]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrator,Librarian")]
+        public async Task<IActionResult> EndExpiredLeases()
+        {
+                await _bookLendingService.EndExpiredLeases();
+
+            return RedirectToAction(nameof(OpenLeases));
+        }
+
 
         #endregion
 
