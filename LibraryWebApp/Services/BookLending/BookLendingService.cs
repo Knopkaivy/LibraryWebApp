@@ -70,6 +70,7 @@ namespace LibraryWebApp.Services.BookLending
             bookLendingHistory.LeaseActualEndDate = DateOnly.FromDateTime(DateTime.Now);
             _context.Update(bookLendingHistory);
             await _context.SaveChangesAsync();
+            await LendBookToWaitingItem(bookId);
         }
         public async Task EndExpiredLeases()
         {
