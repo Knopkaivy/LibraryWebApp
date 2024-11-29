@@ -39,15 +39,17 @@
                     @if (User.IsInRole("Administrator") || User.IsInRole("Librarian"))
                     {
                         <p>
-                            <a class="btn btn-success" asp-action="Create">Add Book</a>
+                            <a class="btn btn-success" asp-controller="Books" asp-action="Create">Add Book</a>
                         </p>
                         <br />
                     }
-
+                    @if (User.IsInRole("Administrator") || User.IsInRole("Librarian") || User.IsInRole("User"))
+                    {
                         <p>
                             <a asp-controller="Books" asp-action="Index">All Books</a>
                         </p>
                         <br />
+                    }
                     @if (User.IsInRole("Administrator") || User.IsInRole("Librarian"))
                     {
                         <ul class="list-unstyled ps-0">
