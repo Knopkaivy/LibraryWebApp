@@ -1,24 +1,56 @@
 ﻿@model LibraryWebApp.Models.UserViewModel
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "User";
 }
 
-<h1>Details</h1>
-
 <div>
-    <h4>UserViewModel</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.User)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.User.Id)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    <h1>User Details</h1>
+    <hr/>
+    <div>
+        <div class="userDetails__field">
+            <div class="userDetails__field-name fw-bold">First Name: </div>
+            @Model.User.FirstName
+        </div>  
+        <br/>
+        <div class="userDetails__field">
+            <div class="userDetails__field-name fw-bold">Last Name: </div>
+            <div>
+                @Model.User.LastName
+            </div>
+        </div>  
+        <br />
+        <div class="userDetails__field">
+            <div class="userDetails__field-name fw-bold">Username: </div>
+            <div>
+                @Model.User.UserName
+            </div>
+        </div>  
+        <br />
+        <div class="userDetails__field">
+            <div class="userDetails__field-name fw-bold">Email: </div>
+            <div>
+                @Model.User.Email
+            </div>
+        </div>  
+        <br />
+        <div class="userDetails__field">
+            <div class="userDetails__field-name fw-bold">Email Confirmed: </div>
+            <div>
+                @(Model.User.EmailConfirmed ? "Yes" : "No")
+            </div>
+        </div>   
+        <br />
+        <div class="userDetails__field">
+            <div class="userDetails__field-name fw-bold">Date of Birth: </div>
+            <div>
+                @Model.User.DateOfBirth
+            </div>
+        </div>
+    </div>
+    <br />
+    <div>
+        <a class="btn btn-warning" asp-action="Edit" asp-route-id="@Model?.User.Id">Edit</a>
+        <a class="btn btn-primary" asp-action="Index">Back to List</a>
+    </div>
 </div>

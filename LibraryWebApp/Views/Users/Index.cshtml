@@ -1,33 +1,42 @@
-﻿@model IEnumerable<LibraryWebApp.Models.UserViewModel>
+﻿@model IEnumerable<ApplicationUser>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Users";
 }
 
 <div>
     <h1>Users</h1>
 
-    <p>
-        <a class="btn btn-primary" asp-action="Create">Add User</a>
-    </p>
     <table class="table">
         <thead>
             <tr>
                 <th>
                     Name
+                </th>                
+                <th>
+                    Username
                 </th>
+                <th></th>
                 <th></th>
             </tr>
         </thead>
         <tbody>
-    @foreach (var item in Model) {
+    @foreach (ApplicationUser user in Model) {
             <tr>
                 <td>
-                        <a asp-action="Details" asp-route-id="@item.Id">@item.User.FirstName @item.User.LastName</a>
+                        <a class="user__name" asp-action="Details" asp-route-id="@user.Id">@user.FirstName @user.LastName</a>
+                </td>                
+                <td>
+                        <a class="user__email" asp-action="Details" asp-route-id="@user.Id">@user.Email</a>
                 </td>
                 <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                        <a class="btn btn-warning btn-sm" asp-action="Edit" asp-route-id="@user.Id">Edit</a>
+                </td>
+                <td>
+                    <form asp-action="Delete" asp-route-id="@user.Id">
+                        <input type="hidden" asp-for="@user.Id" />
+                            <input type="submit" value="Delete" class="btn btn-danger btn-sm" />
+                    </form>
                 </td>
             </tr>
     }

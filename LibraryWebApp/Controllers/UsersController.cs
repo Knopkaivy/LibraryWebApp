@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using LibraryWebApp.Data;
 using LibraryWebApp.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace LibraryWebApp.Controllers
 {
@@ -14,44 +15,43 @@ namespace LibraryWebApp.Controllers
     public class UsersController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private UserManager<ApplicationUser> _userManager;
+        private IPasswordHasher<ApplicationUser> _passwordHasher;
 
-        public UsersController(ApplicationDbContext context)
+        public UsersController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IPasswordHasher<ApplicationUser> passwordHasher)
         {
             _context = context;
+            _userManager = userManager;
+            _passwordHasher = passwordHasher;
         }
 
         // GET: User
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            var applicationUsers = await _context.Users.ToListAsync();
-            List<UserViewModel> UserList = new List<UserViewModel>();
-            foreach( var user in applicationUsers)
-            {
-                UserList.Add(new UserViewModel
-                {
-                    User = user,
-                    UserId = user.Id,
-                });
-            }
 
-            return View(UserList);
+            return View(_userManager.Users);
         }
 
         // GET: Users/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(string? id)
         {
-            if (id == null)
+            if (String.IsNullOrEmpty(id))
             {
                 return NotFound();
             }
 
-            var userViewModel = await _context.UserViewModel
-                .Include(u => u.User)
+            var user = await _context.Users
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (userViewModel == null)
+            if (user == null)
             {
                 return NotFound();
             }
+
+            UserViewModel userViewModel = new UserViewModel
+            {
+                User = user,
+                UserId = user.Id,
+            };
 
             return View(userViewModel);
         }
@@ -59,7 +59,6 @@ namespace LibraryWebApp.Controllers
         // GET: Users/Create
         public IActionResult Create()
         {
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id");
             return View();
         }
 
@@ -68,33 +67,32 @@ namespace LibraryWebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,UserId")] UserViewModel userViewModel)
+        public async Task<IActionResult> Create([Bind("Id, FirstName, LastName, UserName, Email, DateOfBirth, Password")] ApplicationUser user)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(userViewModel);
+                _context.Add(user);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", userViewModel.UserId);
-            return View(userViewModel);
+            return View(user);
         }
 
         // GET: Users/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(string? id)
         {
-            if (id == null)
+            if (String.IsNullOrEmpty(id))
             {
                 return NotFound();
             }
 
-            var userViewModel = await _context.UserViewModel.FindAsync(id);
-            if (userViewModel == null)
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null)
             {
-                return NotFound();
+                return RedirectToAction("Index");
             }
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", userViewModel.UserId);
-            return View(userViewModel);
+
+            return View(user);
         }
 
         // POST: Users/Edit/5
@@ -102,9 +100,10 @@ namespace LibraryWebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,UserId")] UserViewModel userViewModel)
+        public async Task<IActionResult> Edit(string id, string FirstName, string LastName, string UserName, string Email, DateOnly DateOfBirth)
         {
-            if (id != userViewModel.Id)
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null)
             {
                 return NotFound();
             }
@@ -113,12 +112,17 @@ namespace LibraryWebApp.Controllers
             {
                 try
                 {
-                    _context.Update(userViewModel);
-                    await _context.SaveChangesAsync();
+                    user.FirstName = FirstName;
+                    user.LastName = LastName;
+                    user.UserName = UserName;
+                    user.Email = Email;
+                    user.DateOfBirth = DateOfBirth;
+
+                    await _userManager.UpdateAsync(user);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!UserViewModelExists(userViewModel.Id))
+                    if (!ApplicationUserExists(user.Id))
                     {
                         return NotFound();
                     }
@@ -129,47 +133,34 @@ namespace LibraryWebApp.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", userViewModel.UserId);
-            return View(userViewModel);
-        }
-
-        // GET: Users/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var userViewModel = await _context.UserViewModel
-                .Include(u => u.User)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (userViewModel == null)
-            {
-                return NotFound();
-            }
-
-            return View(userViewModel);
+            ViewData["UserId"] = new SelectList(_userManager.Users, "Id", "Id", user.Id);
+            return View(user);
         }
 
         // POST: Users/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(string id)
         {
-            var userViewModel = await _context.UserViewModel.FindAsync(id);
-            if (userViewModel != null)
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null)
             {
-                _context.UserViewModel.Remove(userViewModel);
+                return NotFound();
             }
 
-            await _context.SaveChangesAsync();
+            try
+            {
+                await _userManager.DeleteAsync(user);
+            }
+            catch (Exception ex) {
+                throw;
+            }
             return RedirectToAction(nameof(Index));
         }
 
-        private bool UserViewModelExists(int id)
+        private bool ApplicationUserExists(string id)
         {
-            return _context.UserViewModel.Any(e => e.Id == id);
+            return _context.Users.Any(e => e.Id == id);
         }
     }
 }
