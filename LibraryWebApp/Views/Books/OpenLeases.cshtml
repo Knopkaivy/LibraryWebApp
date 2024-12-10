@@ -33,7 +33,7 @@
                         <td>@item.LeaseStartDate</td>
                         <td>@item.LeaseProjectedEndDate</td>
                     <td>
-                        <form asp-action="EndLease">
+                        <form asp-action="EndLease" asp-route-id="@item.Id">
                             <input type="hidden" asp-for="@item.Id" />
                             <input type="submit" value="End Lease" class="btn btn-link" />
                         </form>

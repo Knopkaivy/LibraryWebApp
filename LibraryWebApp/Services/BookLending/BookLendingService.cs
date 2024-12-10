@@ -6,6 +6,7 @@ namespace LibraryWebApp.Services.BookLending
 {
     public class BookLendingService(ApplicationDbContext _context) : IBookLendingService
     {
+        private readonly int _leaseTerm = 1;
         public async Task LendBook(int bookId, string userId)
         {
             var bookLendingHistory = await _context.LendingHistory.OrderByDescending(b => b.LeaseStartDate).FirstOrDefaultAsync(b => b.BookId == bookId);
@@ -13,12 +14,11 @@ namespace LibraryWebApp.Services.BookLending
                 return;
             }
             DateOnly currentDate = DateOnly.FromDateTime(DateTime.Now);
-            int leaseTerm = 14;
             LendingHistory history = new LendingHistory{
                 BookId = bookId,
                 UserId = userId,
                 LeaseStartDate = currentDate,
-                LeaseProjectedEndDate = currentDate.AddDays(leaseTerm),
+                LeaseProjectedEndDate = currentDate.AddDays(_leaseTerm),
             };
             _context.Add(history);
             var waitingListEntry = await _context.WaitingList.FirstOrDefaultAsync(w => w.BookId == bookId && w.UserId == userId);
@@ -73,7 +73,7 @@ namespace LibraryWebApp.Services.BookLending
             await LendBookToWaitingItem(bookId);
         }
 
-        internal async Task EndLease(int leaseId)
+        internal async Task EndLease(int? leaseId)
         {
             var lease = await _context.LendingHistory.Where(h => h.Id == leaseId).FirstAsync();
             if (lease != null && lease.LeaseActualEndDate == null) {

@@ -230,13 +230,17 @@ namespace LibraryWebApp.Controllers
             return View(history);
         }
 
-        // POST: Books/EndLease/
+        // POST: Books/EndLease/id
         [HttpPost, ActionName("EndLease")]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Administrator,Librarian")]
-        public async Task<IActionResult> EndLease([Bind("Id")] LendingHistory lease)
+        public async Task<IActionResult> EndLease(int? id)
         {
-                await _bookLendingService.EndLease(lease.Id);
+            if (id == null)
+            {
+                return NotFound();
+            }
+            await _bookLendingService.EndLease(id);
 
             return RedirectToAction(nameof(OpenLeases));
         }
