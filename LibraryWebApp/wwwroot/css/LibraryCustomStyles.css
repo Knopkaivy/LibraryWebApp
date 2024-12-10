@@ -7,9 +7,10 @@
     position: relative;
 }
 
-.create-book__form-control, .edit-book__form-control {
+.create-book__form-control, .edit-book__form-control, .edit-user__form-control {
     width: 40rem;
 }
+
 li p{
     margin-bottom: 0;
 }
@@ -21,4 +22,24 @@ td {
 }
 .home__container{
     flex-grow: 1;
+}
+.user__name{
+    text-decoration: none;
+    color: black;
+}
+.user__email {
+    text-decoration: none;
+    color: black;
+}
+.user__name:hover, .user__username:hover {
+        color: black;
+    }
+.userDetails__field{
+    display: flex;
+}
+.userDetails__field-name {
+    width: 180px;
+}
+.user-manager__container{
+    width: 100%;
 }

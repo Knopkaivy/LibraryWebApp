@@ -27,21 +27,13 @@ namespace LibraryWebApp.Controllers
         // GET: Books
         public async Task<IActionResult> Index()
         {
-            List<Book> books = await _context.Book.ToListAsync();
-            List<LendingHistory> historyAll = await _context.LendingHistory.OrderByDescending(h => h.LeaseStartDate).ToListAsync();
-            var history = historyAll.GroupBy(h => h.BookId).Select(h => h.FirstOrDefault()).ToList();            
+            List<Book> books = await _context.Book.ToListAsync();          
+            List<LendingHistory> openHistory = await _context.LendingHistory.Where(h => h.LeaseActualEndDate == null).ToListAsync();
             foreach(Book book in books)
             {
-                var bookHistory = history.Find(h => h.BookId == book.Id);
-                if(bookHistory == null)
-                {
-                    book.IsAvailable = true;
-                }
-                else
-                {
-                    var waitingList = await _context.WaitingList.Where(w => w.BookId == book.Id).ToListAsync();
-                    book.IsAvailable = (bookHistory.LeaseActualEndDate != null && waitingList.Count == 0);
-                }
+                var bookHistory = openHistory.Find(h => h.BookId == book.Id);
+                var waitingList = await _context.WaitingList.Where(w => w.BookId == book.Id).ToListAsync();
+                book.IsAvailable = bookHistory == null && waitingList.Count == 0;
             }
             return View(books);
         }
@@ -238,6 +230,17 @@ namespace LibraryWebApp.Controllers
             return View(history);
         }
 
+        // POST: Books/EndLease/
+        [HttpPost, ActionName("EndLease")]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrator,Librarian")]
+        public async Task<IActionResult> EndLease([Bind("Id")] LendingHistory lease)
+        {
+                await _bookLendingService.EndLease(lease.Id);
+
+            return RedirectToAction(nameof(OpenLeases));
+        }
+
         // POST: Books/EndExpiredLeases/
         [HttpPost, ActionName("EndExpiredLeases")]
         [ValidateAntiForgeryToken]
@@ -285,7 +288,25 @@ namespace LibraryWebApp.Controllers
         }
 
 
-        // GET: Books/Lend/5
+
+
+        // POST: Books/Lend/5
+        [HttpPost, ActionName("Lend")]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "User")]
+        public async Task<IActionResult> Lend(int id)
+        {
+            var book = await _context.Book.FindAsync(id);
+            var user = await _userManager.GetUserAsync(HttpContext.User);
+            if (book != null && user != null)
+            {
+                await _bookLendingService.LendBook(id, user.Id);
+            }
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        // GET: Books/ReturnBook/5
         [Authorize(Roles = "User")]
         public async Task<IActionResult> ReturnBook(int? id)
         {
@@ -302,22 +323,6 @@ namespace LibraryWebApp.Controllers
             }
 
             return View(book);
-        }
-
-        // POST: Books/Lend/5
-        [HttpPost, ActionName("Lend")]
-        [ValidateAntiForgeryToken]
-        [Authorize(Roles = "User")]
-        public async Task<IActionResult> Lend(int id)
-        {
-            var book = await _context.Book.FindAsync(id);
-            var user = await _userManager.GetUserAsync(HttpContext.User);
-            if (book != null && user != null)
-            {
-                await _bookLendingService.LendBook(id, user.Id);
-            }
-
-            return RedirectToAction(nameof(Index));
         }
 
         // POST: Books/ReturnBook/5

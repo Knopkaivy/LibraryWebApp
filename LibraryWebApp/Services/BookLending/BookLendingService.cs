@@ -72,6 +72,17 @@ namespace LibraryWebApp.Services.BookLending
             await _context.SaveChangesAsync();
             await LendBookToWaitingItem(bookId);
         }
+
+        internal async Task EndLease(int leaseId)
+        {
+            var lease = await _context.LendingHistory.Where(h => h.Id == leaseId).FirstAsync();
+            if (lease != null && lease.LeaseActualEndDate == null) {
+                lease.LeaseActualEndDate = DateOnly.FromDateTime(DateTime.Now);
+                _context.Update(lease);
+                await _context.SaveChangesAsync();
+            }
+        }
+
         public async Task EndExpiredLeases()
         {
             DateOnly today = DateOnly.FromDateTime(DateTime.Now);
@@ -102,11 +113,13 @@ namespace LibraryWebApp.Services.BookLending
             if (potentialLeaseItems.Count > 0) {
                 foreach (var lease in potentialLeaseItems) {
                     if (lease != null) { 
-                        await LendBookToWaitingItem(lease.BookId);
+                        var mostRecentLease = await _context.LendingHistory.OrderByDescending(h => h.Id).FirstOrDefaultAsync();
+                        if (mostRecentLease != null && mostRecentLease.LeaseActualEndDate == null) { 
+                            await LendBookToWaitingItem(lease.BookId);
+                        }
                     }
                 }
             }
         }
-
     }
 }

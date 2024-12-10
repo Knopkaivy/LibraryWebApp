@@ -16,6 +16,7 @@
                 <th scope="col">User</th>
                 <th scope="col">Start Date</th>
                 <th scope="col">Projected End Date</th>
+                <th scope="col"></th>
             </tr>
         </thead>
         <tbody>
@@ -31,6 +32,11 @@
                         <td>@item.User.FirstName @item.User.LastName</td>
                         <td>@item.LeaseStartDate</td>
                         <td>@item.LeaseProjectedEndDate</td>
+                    <td>
+                        <form asp-action="EndLease">
+                            <input type="hidden" asp-for="@item.Id" />
+                            <input type="submit" value="End Lease" class="btn btn-link" />
+                        </form>
                     </tr>
                     i++;
                 }
