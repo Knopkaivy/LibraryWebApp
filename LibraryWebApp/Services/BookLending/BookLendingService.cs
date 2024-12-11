@@ -42,7 +42,8 @@ namespace LibraryWebApp.Services.BookLending
                 return;
             }
 
-            WaitingListItem newWaitingListEntry = new WaitingListItem{
+            WaitingListItem newWaitingListEntry = new WaitingListItem
+            {
                 BookId = bookId,
                 UserId = userId,
             };
@@ -60,17 +61,17 @@ namespace LibraryWebApp.Services.BookLending
             }
         }
 
-        public async Task ReturnBook(int bookId, string userId)
+        public async Task ReturnBook(int recordId, string userId)
         {
-            var bookLendingHistory = await _context.LendingHistory.OrderByDescending(b => b.LeaseStartDate).FirstAsync(b => b.BookId == bookId && b.UserId == userId);
-            if(bookLendingHistory == null)
+            var historyRecord = await _context.LendingHistory.FirstAsync(h => h.Id == recordId && h.UserId == userId);
+            if(historyRecord == null)
             {
                 return;
             }
-            bookLendingHistory.LeaseActualEndDate = DateOnly.FromDateTime(DateTime.Now);
-            _context.Update(bookLendingHistory);
+            historyRecord.LeaseActualEndDate = DateOnly.FromDateTime(DateTime.Now);
+            _context.Update(historyRecord);
             await _context.SaveChangesAsync();
-            await LendBookToWaitingItem(bookId);
+            await LendBookToWaitingItem(historyRecord.BookId);
         }
 
         internal async Task EndLease(int? leaseId)
@@ -99,7 +100,7 @@ namespace LibraryWebApp.Services.BookLending
         
         public async Task LendBookToWaitingItem(int bookId)
         {
-            var waitingItem = await _context.WaitingList.OrderBy(w => w.Id).FirstAsync(w => w.BookId == bookId);
+            var waitingItem = await _context.WaitingList.OrderBy(w => w.Id).FirstOrDefaultAsync(w => w.BookId == bookId);
             if (waitingItem == null) {
                 return;
             }

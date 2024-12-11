@@ -335,9 +335,8 @@ namespace LibraryWebApp.Controllers
         [Authorize(Roles = "User")]
         public async Task<IActionResult> ReturnBook(int id)
         {
-            var book = await _context.Book.FindAsync(id);
             var user = await _userManager.GetUserAsync(HttpContext.User);
-            if (book != null && user != null)
+            if  (user != null)
             {
                 await _bookLendingService.ReturnBook(id, user.Id);
             }
@@ -399,13 +398,13 @@ namespace LibraryWebApp.Controllers
             {
                 return RedirectToAction(nameof(Index));
             }
-            List<Book> myBooks = new List<Book>();
-            List<LendingHistory> myHistory = await _context.LendingHistory.Where(h => h.UserId == user.Id && h.LeaseActualEndDate == null).ToListAsync();
-            foreach (LendingHistory lendingHistory in myHistory) { 
+
+            List<LendingHistory> myBooks = await _context.LendingHistory.Where(h => h.UserId == user.Id && h.LeaseActualEndDate == null).ToListAsync();
+            foreach (LendingHistory lendingHistory in myBooks) { 
                 var book = await _context.Book.FindAsync(lendingHistory.BookId);
                 if(book != null)
                 {
-                    myBooks.Add(book);
+                    lendingHistory.Book = book;
                 }
             }
 

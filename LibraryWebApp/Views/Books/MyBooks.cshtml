@@ -1,4 +1,4 @@
-﻿@model IEnumerable<LibraryWebApp.Models.Book>
+﻿@model IEnumerable<LibraryWebApp.Data.LendingHistory>
 
 @{
     ViewData["Title"] = "My Books";
@@ -9,15 +9,18 @@
     {
         <div class="col">
             <div class="card h-100">
-                <img src="@Html.DisplayFor(modelItem => item.CoverImageUrl)" class="card-img-top" alt="@Html.DisplayFor(modelItem => item.Title) cover">
+                <img src="@Html.DisplayFor(modelItem => item.Book.CoverImageUrl)" class="card-img-top" alt="@Html.DisplayFor(modelItem => item.Book.Title) cover">
                 <div class="card-body">
-                    <h5 class="card-title text-truncate">@Html.DisplayFor(modelItem => item.Title)</h5>
-                    <p class="card-text">by @Html.DisplayFor(modelItem => item.Author)</p>
+                    <h5 class="card-title text-truncate">@Html.DisplayFor(modelItem => item.Book.Title)</h5>
+                    <p class="card-text">by @Html.DisplayFor(modelItem => item.Book.Author)</p>
                 </div>
                 <div class="card-footer">
                     <small class="text-body-secondary">
-                        <a class="stretched-link" asp-action="Details" asp-route-id="@item.Id"></a>
-                        <a class="btn btn-success" asp-action="ReturnBook" asp-route-id="@item.Id">Return</a>
+                        <a class="stretched-link" asp-action="Details" asp-route-id="@item.BookId"></a>
+                        <form asp-action="ReturnBook" asp-route-id="@item.Id">
+                            <input type="hidden" asp-for="@item.Id" />
+                            <input type="submit" value="Return" class="btn btn-success" />
+                        </form>
                     </small>
                 </div>
             </div>
