@@ -310,25 +310,6 @@ namespace LibraryWebApp.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // GET: Books/ReturnBook/5
-        [Authorize(Roles = "User")]
-        public async Task<IActionResult> ReturnBook(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var book = await _context.Book
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (book == null)
-            {
-                return NotFound();
-            }
-
-            return View(book);
-        }
-
         // POST: Books/ReturnBook/5
         [HttpPost, ActionName("ReturnBook")]
         [ValidateAntiForgeryToken]
