@@ -205,7 +205,7 @@ namespace LibraryWebApp.Controllers
                                                            User = U,
                                                            LeaseStartDate = LH.LeaseStartDate,
                                                            LeaseProjectedEndDate = LH.LeaseProjectedEndDate,
-                                                       }).OrderBy(w => w.Book.Title).ToListAsync();
+                                                       }).OrderBy(w => w.Id).ToListAsync();
 
             return View(openLeases);
         }
@@ -225,7 +225,7 @@ namespace LibraryWebApp.Controllers
                                                            LeaseStartDate = LH.LeaseStartDate,
                                                            LeaseProjectedEndDate = LH.LeaseProjectedEndDate,
                                                            LeaseActualEndDate = LH.LeaseActualEndDate,
-                                                       }).OrderBy(h => h.Book.Title).ThenByDescending(h => h.LeaseStartDate).ToListAsync();
+                                                       }).OrderByDescending(h => h.Id).ToListAsync();
 
             return View(history);
         }
@@ -436,44 +436,6 @@ namespace LibraryWebApp.Controllers
             }
 
             return View(myWaitingList);
-        }
-
-
-        // GET: Books/RemoveHold/5
-        [Authorize(Roles = "User")]
-        public async Task<IActionResult> RemoveHold(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var holdItem = await _context.WaitingList.FirstOrDefaultAsync(w => w.Id == id);
-            if (holdItem == null)
-            {
-                return NotFound();
-            }
-            var book = await _context.Book
-                .FirstOrDefaultAsync(m => m.Id == holdItem.BookId);
-            if (book == null)
-            {
-                return NotFound();
-            }
-
-            holdItem.Book = book;
-
-            var history = await _context.LendingHistory.OrderByDescending(h => h.LeaseStartDate).FirstOrDefaultAsync(m => m.BookId == id);
-            book.IsAvailable = history == null || history.LeaseActualEndDate != null;
-
-            if (!book.IsAvailable)
-            {
-                var waitingList = await _context.WaitingList.Where(m => m.BookId == id).ToListAsync();
-                int waitingTimeInWeeks = waitingList == null ? 0 : waitingList.Count * 2;
-                waitingTimeInWeeks += (int)Math.Ceiling(((decimal)history.LeaseStartDate.DayNumber + 14 - DateOnly.FromDateTime(DateTime.Now).DayNumber) / 7);
-                book.WaitingTime = waitingTimeInWeeks;
-            }
-
-            return View(holdItem);
         }
 
         // POST: Books/RemoveHold/5

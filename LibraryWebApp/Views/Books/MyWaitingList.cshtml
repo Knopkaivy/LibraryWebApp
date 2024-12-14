@@ -24,7 +24,9 @@
                         }
                         else
                         {
-                            <a class="btn btn-danger" asp-action="RemoveHold" asp-route-id="@item.Id">Remove Hold</a>
+                            <form asp-action="RemoveHold" asp-route-id="@item.Id">
+                                <input type="submit" value="Remove Hold" class="btn btn-danger" />
+                            </form>
                         }
                     </small>
                 </div>

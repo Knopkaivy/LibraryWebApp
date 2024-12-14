@@ -9,7 +9,7 @@ namespace LibraryWebApp.Services.BookLending
         private readonly int _leaseTerm = 1;
         public async Task LendBook(int bookId, string userId)
         {
-            var bookLendingHistory = await _context.LendingHistory.OrderByDescending(b => b.LeaseStartDate).FirstOrDefaultAsync(b => b.BookId == bookId);
+            var bookLendingHistory = await _context.LendingHistory.OrderByDescending(h => h.Id).FirstOrDefaultAsync(h => h.BookId == bookId);
             if (bookLendingHistory != null && bookLendingHistory.LeaseActualEndDate == null) {
                 return;
             }
@@ -31,7 +31,7 @@ namespace LibraryWebApp.Services.BookLending
         public async Task PlaceHoldOnBook(int bookId, string userId)
         {
             var waitingList = await _context.WaitingList.Where(w => w.BookId == bookId).ToListAsync();
-            var bookLendingHistory = await _context.LendingHistory.OrderByDescending(b => b.LeaseStartDate).FirstOrDefaultAsync(b => b.BookId == bookId);
+            var bookLendingHistory = await _context.LendingHistory.OrderByDescending(b => b.Id).FirstOrDefaultAsync(b => b.BookId == bookId);
             if ((bookLendingHistory == null || bookLendingHistory.LeaseActualEndDate != null) && waitingList.Count == 0) {
                 return;
             }
@@ -81,7 +81,8 @@ namespace LibraryWebApp.Services.BookLending
                 lease.LeaseActualEndDate = DateOnly.FromDateTime(DateTime.Now);
                 _context.Update(lease);
                 await _context.SaveChangesAsync();
-            }
+				await LendBookToWaitingItem(lease.BookId);
+			}
         }
 
         public async Task EndExpiredLeases()
@@ -114,8 +115,8 @@ namespace LibraryWebApp.Services.BookLending
             if (potentialLeaseItems.Count > 0) {
                 foreach (var lease in potentialLeaseItems) {
                     if (lease != null) { 
-                        var mostRecentLease = await _context.LendingHistory.OrderByDescending(h => h.Id).FirstOrDefaultAsync();
-                        if (mostRecentLease != null && mostRecentLease.LeaseActualEndDate == null) { 
+                        var mostRecentLease = await _context.LendingHistory.OrderByDescending(h => h.Id).FirstOrDefaultAsync(h => h.BookId == lease.BookId);
+                        if (mostRecentLease != null && mostRecentLease.LeaseActualEndDate != null) { 
                             await LendBookToWaitingItem(lease.BookId);
                         }
                     }
