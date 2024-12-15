@@ -1,4 +1,4 @@
-﻿@model IEnumerable<ApplicationUser>
+﻿@model IEnumerable<UserViewModel>
 
 @{
     ViewData["Title"] = "Users";
@@ -16,26 +16,40 @@
                 <th>
                     Username
                 </th>
+                <th>
+                    Role
+                </th>
+                <th></th>
                 <th></th>
                 <th></th>
             </tr>
         </thead>
         <tbody>
-    @foreach (ApplicationUser user in Model) {
+            @foreach (UserViewModel item in Model)
+            {
             <tr>
                 <td>
-                        <a class="user__name" asp-action="Details" asp-route-id="@user.Id">@user.FirstName @user.LastName</a>
+                        <a class="user__name" asp-action="Details" asp-route-id="@item.User.Id">@item.User.FirstName @item.User.LastName</a>
                 </td>                
                 <td>
-                        <a class="user__email" asp-action="Details" asp-route-id="@user.Id">@user.Email</a>
+                        <a class="user__email" asp-action="Details" asp-route-id="@item.User.Id">@item.User.Email</a>
                 </td>
                 <td>
-                        <a class="btn btn-warning btn-sm" asp-action="Edit" asp-route-id="@user.Id">Edit</a>
+                        @foreach(string role in item.Roles)
+                        {
+							<span>@role </span>
+                        }
+                    </td>
+                <td>
+                        <a class="btn btn-link" asp-action="EditRole" asp-route-id="@item.User.Id">Edit Roles</a>
+                </td>                
+                <td>
+                        <a class="btn btn-link" asp-action="Edit" asp-route-id="@item.User.Id">Edit Details</a>
                 </td>
                 <td>
-                    <form asp-action="Delete" asp-route-id="@user.Id">
-                        <input type="hidden" asp-for="@user.Id" />
-                            <input type="submit" value="Delete" class="btn btn-danger btn-sm" />
+                        <form asp-action="Delete" asp-route-id="@item.User.Id">
+                            <input type="hidden" asp-for="@item.User.Id" />
+                            <input type="submit" value="Delete User" class="btn btn-link" />
                     </form>
                 </td>
             </tr>

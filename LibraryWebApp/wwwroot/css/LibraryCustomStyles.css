@@ -43,3 +43,6 @@ td {
 .user-manager__container{
     width: 100%;
 }
+.edit-user-role__name, .edit-user-role__form-check {
+    width: 40rem;
+}

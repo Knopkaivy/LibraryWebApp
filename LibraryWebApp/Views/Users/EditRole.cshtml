@@ -1,0 +1,46 @@
+﻿@model LibraryWebApp.Models.UserViewModel
+
+@{
+    ViewData["Title"] = "Edit User";
+}
+
+<div>
+    <h1>Edit User Role</h1>
+
+    <hr />
+    <div class="row">
+        <div class="col-md-4">
+            <h2 class="edit-user-role__name">@Model.User.FirstName @Model.User.LastName</h2>
+            <br/>
+            <form asp-action="EditRole" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="Id" />
+                <div class="edit-user-role__form-check form-group">
+                    <label asp-for="Roles" class="form-check-label fw-bold">
+                        Roles:
+                    </label>
+                    <div>
+                        <input class="form-check-input" type="checkbox" name="RoleList" value="Administrator" id="Administrator" checked="@Model.Roles.Contains("Administrator")"> Administrator
+                    </div>
+                    <div>
+                        <input class="form-check-input" type="checkbox" name="RoleList" value="Librarian" id="Librarian" checked="@Model.Roles.Contains("Librarian")"> Librarian
+                    </div>
+                    <div>
+                        <input class="form-check-input" type="checkbox" name="RoleList" value="User" id="User" checked="@Model.Roles.Contains("User")"> User
+                    </div>
+                </div>
+                <br />
+                <div class="form-group">
+                    <input type="submit" value="Save" class="btn btn-success" />
+                    <input class="btn btn-primary" type="button" onclick="history.go(-1)" value="Cancel" />
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
