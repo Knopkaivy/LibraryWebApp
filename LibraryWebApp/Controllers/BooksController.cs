@@ -52,7 +52,7 @@ namespace LibraryWebApp.Controllers
             {
                 return NotFound();
             }
-            var history = await _context.LendingHistory.OrderByDescending(h => h.LeaseStartDate).FirstOrDefaultAsync(m => m.BookId == id);
+            var history = await _context.LendingHistory.OrderByDescending(h => h.Id).FirstOrDefaultAsync(m => m.BookId == id);
             var waitingList = await _context.WaitingList.Where(w => w.BookId == book.Id).ToListAsync();
             book.IsAvailable = (history == null || history.LeaseActualEndDate != null) && waitingList.Count == 0;
 
@@ -341,7 +341,7 @@ namespace LibraryWebApp.Controllers
                 return NotFound();
             }
 
-            var history = await _context.LendingHistory.OrderByDescending(h => h.LeaseStartDate).FirstOrDefaultAsync(m => m.BookId == id);
+            var history = await _context.LendingHistory.OrderByDescending(h => h.Id).FirstOrDefaultAsync(m => m.BookId == id);
             book.IsAvailable = history == null || history.LeaseActualEndDate != null;
 
             if (!book.IsAvailable) { 
@@ -401,12 +401,12 @@ namespace LibraryWebApp.Controllers
                 return RedirectToAction(nameof(Index));
             }
             List<Book> myBooksHistory = new List<Book>();
-            List<LendingHistory> myHistory = await _context.LendingHistory.Where(h => h.UserId == user.Id && h.LeaseActualEndDate != null).ToListAsync();
+            List<LendingHistory> myHistory = await _context.LendingHistory.Where(h => h.UserId == user.Id && h.LeaseActualEndDate != null).GroupBy(h => h.BookId).Select(b => b.First()).ToListAsync();
             foreach (LendingHistory lendingHistory in myHistory) { 
                 var book = await _context.Book.FindAsync(lendingHistory.BookId);
                 if(book != null)
                 {
-                    var bookHistory = await _context.LendingHistory.OrderByDescending(h => h.LeaseStartDate).FirstOrDefaultAsync(m => m.BookId == book.Id);
+                    var bookHistory = await _context.LendingHistory.OrderByDescending(h => h.Id).FirstOrDefaultAsync(m => m.BookId == book.Id);
                     var waitingList = await _context.WaitingList.Where(w => w.BookId == book.Id).ToListAsync();
                     book.IsAvailable = (bookHistory == null || bookHistory.LeaseActualEndDate != null) && waitingList.Count == 0;
 
