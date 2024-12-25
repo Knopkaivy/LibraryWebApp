@@ -1,12 +1,16 @@
-﻿
+﻿using LibraryWebApp.Services.EmailSender;
 using LibraryWebApp.Models;
 using Microsoft.EntityFrameworkCore;
+using IEmailSenderService = LibraryWebApp.Services.EmailSender.IEmailSenderService;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace LibraryWebApp.Services.BookLending
 {
     public class BookLendingService(ApplicationDbContext _context) : IBookLendingService
     {
-        private readonly int _leaseTerm = 1;
+        private readonly int _leaseTerm = 14;
+        private readonly IEmailSenderService _emailSender = new EmailSenderService();
+
         public async Task LendBook(int bookId, string userId)
         {
             var bookLendingHistory = await _context.LendingHistory.OrderByDescending(h => h.Id).FirstOrDefaultAsync(h => h.BookId == bookId);
@@ -26,7 +30,22 @@ namespace LibraryWebApp.Services.BookLending
                 _context.Remove(waitingListEntry);
             }
             await _context.SaveChangesAsync();
-        }        
+            await SendLendingConfirmationEmailToUser(bookId, userId);
+        }    
+        
+        public async Task SendLendingConfirmationEmailToUser(int bookId, string userId)
+        {
+            var user = await _context.Users.FindAsync(userId);
+            var book = await _context.Book.FindAsync(bookId);
+            if (user != null && book != null)
+            {
+                string subject = String.Format("{0} by {1} - is ready", book.Title, book.Author);
+                string message = String.Format("Hi {0},{4}{1} by {2} is now available on your reading app for the next {3} days.{4}Thank you for supporting Your Local Library", user.FirstName, book.Title, book.Author, _leaseTerm, Environment.NewLine);
+                await _emailSender.SendEmailAsync(user.Email, subject, message);
+            }
+
+
+        }
         
         public async Task PlaceHoldOnBook(int bookId, string userId)
         {
@@ -94,6 +113,7 @@ namespace LibraryWebApp.Services.BookLending
                 foreach (var lease in expiredLeaseList) {
                     lease.LeaseActualEndDate = today;
                     _context.Update(lease);
+                    await LendBookToWaitingItem(lease.BookId);
                 }
                 await _context.SaveChangesAsync();
             }

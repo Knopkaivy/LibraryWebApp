@@ -1,7 +1,9 @@
 using LibraryWebApp.Data;
 using LibraryWebApp.Services.BookLending;
+using LibraryWebApp.Services.EmailSender;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using IEmailSenderService = LibraryWebApp.Services.EmailSender.IEmailSenderService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,6 +19,7 @@ builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.R
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();
+builder.Services.AddTransient<IEmailSenderService, EmailSenderService>();
 
 var app = builder.Build();
 
